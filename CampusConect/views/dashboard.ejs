@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head><title>CampusConnect - Dashboard</title></head>
+<body>
+  <h2>Welcome, <%= user.full_name %></h2>
+  <div id="welcomeBanner"></div>
+
+  <script>
+    const MODE_CLIENT = "<%= mode %>";
+    // VULNERABLE in 'vulnerable' mode: innerHTML executes injected HTML/JS.
+    // SAFE in 'safe' mode: textContent never parses HTML, so no DOM-based XSS.
+    const hash = decodeURIComponent(window.location.hash.substring(1));
+    if (hash) {
+      const banner = document.getElementById('welcomeBanner');
+      if (MODE_CLIENT === 'safe') {
+        banner.textContent = "Note: " + hash;
+      } else {
+        banner.innerHTML = "Note: " + hash;
+      }
+    }
+  </script>
+
+  <p>Mode: <b><%= mode %></b></p>
+
+  <h3>Your Bio</h3>
+  <% if (mode === 'safe') { %>
+    <p><%= bioHtml %></p>
+  <% } else { %>
+    <p><%- bioHtml %></p>
+  <% } %>
+
+  <form method="POST" action="/bio">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <textarea name="bio" rows="3" cols="40"><%= user.bio %></textarea><br>
+    <button type="submit">Update Bio</button>
+  </form>
+
+  <hr>
+  <h3>Search Students</h3>
+  <form method="GET" action="/search">
+    <input type="text" name="q" placeholder="Search by name...">
+    <button type="submit">Search</button>
+  </form>
+  <%- searchResultsHtml %>
+
+  <hr>
+  <h3>Student Lookup (check if a username exists)</h3>
+  <form method="GET" action="/student-lookup">
+    <input type="text" name="username" placeholder="Enter username...">
+    <button type="submit">Check</button>
+  </form>
+  <%- lookupResult %>
+
+  <hr>
+  <form method="GET" action="/logout">
+    <button type="submit">Logout</button>
+  </form>
+</body>
+</html>

